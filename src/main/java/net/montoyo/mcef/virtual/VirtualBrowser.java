@@ -1,5 +1,7 @@
 package net.montoyo.mcef.virtual;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.montoyo.mcef.api.IBrowser;
 import net.montoyo.mcef.api.IStringVisitor;
 
@@ -14,7 +16,7 @@ public class VirtualBrowser implements IBrowser {
     }
 
     @Override
-    public void draw(double x1, double y1, double x2, double y2) {
+    public void draw(GuiGraphics graphics, double x1, double y1, double x2, double y2) {
     }
 
     @Override
@@ -31,7 +33,7 @@ public class VirtualBrowser implements IBrowser {
     }
 
     @Override
-    public void injectKeyTyped(char c, int mods) {
+    public void injectKeyTyped(int key, int mods) {
     }
 
     @Override

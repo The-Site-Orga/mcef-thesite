@@ -14,8 +14,15 @@ public class FileListing {
     public FileListing(File dir) {
         location = new File(dir, "mcefFiles.lst");
 
-        if(location.exists())
+        if(!location.exists()) {
+            try {
+                location.createNewFile(); // Create the file if it doesn't exist
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
             load();
+        }
     }
 
     public boolean load() {

@@ -35,7 +35,12 @@ public abstract class CefRequest {
         RT_FAVICON, //!< Favicon.
         RT_XHR, //!< XMLHttpRequest.
         RT_PING, //!< A request for a <ping>
-        RT_SERVICE_WORKER //!< Main resource of a service worker.
+        RT_SERVICE_WORKER, //!< Main resource of a service worker.
+        RT_CSP_REPORT, //!< A report of Content Security Policy violations.
+        RT_PLUGIN_RESOURCE, //!< A resource that a plugin requested.
+        RT_NAVIGATION_PRELOAD_MAIN_FRAME, //!< A main-frame service worker navigation preload
+                                          //!< request.
+        RT_NAVIGATION_PRELOAD_SUB_FRAME, //!< A sub-frame service worker navigation preload request.
     }
 
     /**
@@ -318,12 +323,23 @@ public abstract class CefRequest {
     // This CTOR can't be called directly. Call method create() instead.
     CefRequest() {}
 
+    @Override
+    protected void finalize() throws Throwable {
+        dispose();
+        super.finalize();
+    }
+
     /**
      * Create a new CefRequest object.
      */
     public static final CefRequest create() {
         return CefRequest_N.createNative();
     }
+
+    /**
+     * Removes the native reference from an unused object.
+     */
+    public abstract void dispose();
 
     /**
      * Returns the globally unique identifier for this request or 0 if not
@@ -384,6 +400,24 @@ public abstract class CefRequest {
      * Set the post data.
      */
     public abstract void setPostData(CefPostData postData);
+
+    /**
+     * Get the value for the specified response header field. The Referer value cannot be retrieved
+     * using this method. Use getHeaderMap instead if there might be multiple values.
+     * @param name The header name.
+     * @return The header value.
+     */
+    public abstract String getHeaderByName(String name);
+
+    /**
+     * Set the value for the specified response header field. The Referer value cannot be set using
+     * this method.
+     * @param name The header name.
+     * @param value The header value.
+     * @param overwrite If true any existing values will be replaced with the new value. If false
+     *         any existing values will not be overwritten.
+     */
+    public abstract void setHeaderByName(String name, String value, boolean overwrite);
 
     /**
      * Get the header values.

@@ -1,35 +1,36 @@
-# MCEF
-Minecraft Chromium Embedded Framework (MCEF) is an API to allow Minecraft Modders to add custom web browsers into Minecraft.
-The project was initialy made for WebDisplays (www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1291044-web-displays-browse-on-the-internet-in-minecraft).
-It is based on JCEF (https://code.google.com/p/javachromiumembedded/), which is based on CEF (https://bitbucket.org/chromiumembedded/java-cef) which is based on chromium (http://www.chromium.org).
+# Why did you stop porting
+I'm spending some time working of CinemaMod which seems to be much more complete and includes it's own CEF integeration that is probaly better than mine (at least for keyboard input). 
+[Check it out here!](https://github.com/CinemaMod/)
+It's probaly closer to the WebDisplays for modern versions you've been looking for. 
+![CinemaMod Teaser Images from their mod GitHub page](https://user-images.githubusercontent.com/30220598/173701589-b093e08b-7568-465e-87c3-14574d645c1f.jpg)
 
-# Features
-- 2D & 3D web view rendering (not only in GUIs)
-- Java -> JavaScript (IBrowser.runJavaScript)
-- JavaScript -> Java (IJSQueryHandler)
-- Embedded files (mod://modname/file.html => /assets/modname/html/file.html)
-- HTML5, CSS3 are supported.
+# MCEF (fork of javaarchives fabric fork)
+A forge version of mcef to support multiple platforms and provide an updated Chromium release.
 
-# What can I do with this?
-- If you're tired of Minecraft's GuiScreen, you can make a HTML/JS/CSS GUI.
-- Open a link to your wiki.
-- Whatever you want, but please not a WebDisplays clone.
+Chromium Version `100.0.4896`
+
+Thanks to ds58 for the original chromium update and platform support. Only the fabric and ui porting is done by javaarchive. Forge port from fabric done by Mysticpasta1
+
+[See the original project here for more information](https://github.com/montoyo/mcef)
+
+[ds58's JCEF mirror](https://ds58-mcef-mirror.ewr1.vultrobjects.com/)
+
+
+# What JavaArchive got working
+![MCEF on Windows 11 Virtual Machine](https://cdn.discordapp.com/attachments/985588552735809700/986510944848973824/Windows_11-2022-06-14-21-43-16.png)
+This was before JavaArchive put in proper mouse and keyboard input. 
+
+![MCEF on Arch + Gnome](https://cdn.discordapp.com/attachments/986642832695627816/987765385971515482/Screenshot_from_2022-06-15_08-33-38.png)
+JavaArchive fixed the bottom bit being glitchy later on. 
+
+# What doesn't work
+* Pressing enter in text boxes
+* Scroll wheel
+* Focusing the addressbar (probaly easily fixable)
 
 # Currently supported platforms
-Right now MCEF supports Windows 32 and 64 bits. I'll compile JCEF for linux as soon as possible. However I can't compile it for Mac.
-If you want to compile the natives for Mac, you can follow the instructions here: https://bitbucket.org/chromiumembedded/java-cef/wiki/BranchesAndBuilding
-
-# For players
-This is the Github project of MCEF; here you can only read the source code of it.
-You can download the mod in its latest version from here: http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/2324969-minecraft-chromium-embedded-framework-mcef
-
-# For modders
-**DONT** copy the net.montoyo.mcef.api package into your project. Instead, download the latest API release from https://github.com/montoyo/mcef/releases and put it in the libs folder. Users will have to download the mod from the MinecraftForum thread.
-To understand how it works, you may look at the net.montoyo.mcef.example package, which demos:
-* The IBrowser interface, how to draw it and control it
-* The IJSQueryHandler interface, how to handle JavaScript queries
-* The IDisplayHandler interface, how to handle browser URL changes
-* How to use the mod:// scheme
-
-# For forkers
-Don't forget to add "-Dfml.coreMods.load=net.montoyo.mcef.coremod.ShutdownPatcher" to the VM options, otherwise the Java process will hang forever!
+- Windows 10/11 64 bit
+- macOS (Intel-based Macs only)
+- Linux 64 bit (tested on Fedora 34 and Ubuntu 20.04) 
+  (note:  linux actually has an incompatible glibc 2.32 in the newest CEF builds sadly so 20.04 and lower will run into library issues). These issues JavaArchive can't really fix unless JavaArchive get the time to build CEF myself. 
+  

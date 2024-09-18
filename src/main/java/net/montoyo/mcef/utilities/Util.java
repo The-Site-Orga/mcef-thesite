@@ -16,6 +16,7 @@ import java.util.zip.ZipInputStream;
 import net.montoyo.mcef.MCEF;
 import net.montoyo.mcef.remote.Mirror;
 import net.montoyo.mcef.remote.MirrorManager;
+import org.cef.OS;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -49,6 +50,19 @@ public class Util {
      * @return true if the extraction was successful.
      */
     public static boolean extract(File zip, File out) {
+        // For macOS, the "unzip" utility seems to be reliable at setting certain flags on executables when extracting
+        // Otherwise, extracting a .app is a pain. It refuses to run without setting executable flags on the contents, etc
+        if (OS.isMacintosh()) {
+            try {
+                Process unzip = Runtime.getRuntime().exec(new String[]{"/usr/bin/unzip", zip.getAbsolutePath(), "-d", out.getAbsolutePath()});
+                unzip.waitFor();
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
         ZipInputStream zis;
         
         try {
@@ -315,9 +329,6 @@ public class Util {
             try {
                 Mirror m = MirrorManager.INSTANCE.getCurrent();
                 conn = m.getResource(res);
-
-                if(conn instanceof HttpsURLConnection && m.usesLetsEncryptCertificate() && MCEF.SSL_SOCKET_FACTORY != null)
-                    ((HttpsURLConnection) conn).setSSLSocketFactory(MCEF.SSL_SOCKET_FACTORY);
             } catch(MalformedURLException e) {
                 Log.error("%s Is the mirror list broken?", err);
                 e.printStackTrace();

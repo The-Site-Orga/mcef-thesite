@@ -1,5 +1,8 @@
 package net.montoyo.mcef.api;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
+
 public interface IBrowser {
     
     /**
@@ -23,7 +26,7 @@ public interface IBrowser {
      * @param x2 The second X coord of the rectangle to render the web view on (right).
      * @param y2 The second Y coord of the rectangle to render the web view on (bottom).
      */
-    void draw(double x1, double y1, double x2, double y2);
+    void draw(GuiGraphics matrixStack, double x1, double y1, double x2, double y2);
 
     /**
      * Gets the OpenGL texture ID of the web view.
@@ -56,10 +59,10 @@ public interface IBrowser {
     /**
      * Simulates a keyboard type.
      * 
-     * @param c The typed character.
+     * @param key The typed character.
      * @param mods The key modifiers (shift, ctrl, alt)
      */
-    void injectKeyTyped(char c, int mods);
+    void injectKeyTyped(int key, int mods);
     
     /**
      * Simulates a key press.

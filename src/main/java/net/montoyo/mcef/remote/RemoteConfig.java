@@ -1,5 +1,16 @@
 package net.montoyo.mcef.remote;
 
+import com.google.gson.*;
+import net.minecraft.client.Minecraft;
+import net.montoyo.mcef.MCEF;
+import net.montoyo.mcef.client.ClientProxy;
+import net.montoyo.mcef.setup.FileListing;
+import net.montoyo.mcef.utilities.IProgressListener;
+import net.montoyo.mcef.utilities.Log;
+import net.montoyo.mcef.utilities.Util;
+import net.montoyo.mcef.utilities.Version;
+import org.cef.OS;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -7,22 +18,7 @@ import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import net.minecraft.client.Minecraft;
-import net.montoyo.mcef.setup.FileListing;
-import org.cef.OS;
-
-import net.montoyo.mcef.MCEF;
-import net.montoyo.mcef.client.ClientProxy;
-import net.montoyo.mcef.utilities.IProgressListener;
-import net.montoyo.mcef.utilities.Log;
-import net.montoyo.mcef.utilities.Util;
-import net.montoyo.mcef.utilities.Version;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import static net.montoyo.mcef.client.ClientProxy.JCEF_ROOT;
 
 /**
  * A class for updating and parsing the remote configuration file.
@@ -68,8 +64,8 @@ public class RemoteConfig {
      * @return The parsed configuration file.
      */
     private JsonObject readConfig() {
-        File newCfg = new File(ClientProxy.ROOT, "mcef2.new");
-        File cfgFle = new File(ClientProxy.ROOT, "mcef2.json");
+        File newCfg = new File(JCEF_ROOT, "mcef2.new");
+        File cfgFle = new File(JCEF_ROOT, "mcef2.json");
         
         boolean ok = Util.download("config2.json", newCfg, null);
 
@@ -116,7 +112,7 @@ public class RemoteConfig {
         }
         
         String arch = System.getProperty("sun.arch.data.model");
-        if(!arch.equals("32") && !arch.equals("64")) {
+        if(!arch.equals("64")) {
             //Shouldn't happen.
             Log.error("Your CPU arch isn't supported by MCEF. Entering virtual mode.");
             ClientProxy.VIRTUAL = true;
@@ -165,11 +161,15 @@ public class RemoteConfig {
                     extract.add(e.getAsString());
             }
         }
+
+        String actualVersion = String.valueOf(Minecraft.getInstance().getLaunchedVersion());
         
         JsonElement mcVersions = json.get("latestVersions");
         if(mcVersions != null && mcVersions.isJsonObject()) {
-            JsonElement cVer = mcVersions.getAsJsonObject().get(Minecraft.getMinecraft().getVersion());
+            JsonElement cVer = mcVersions.getAsJsonObject().get("1.19");
 
+            // My glibc version is 2.31 :( so newer doesn't work
+            
             if(cVer != null && cVer.isJsonPrimitive())
                 version = cVer.getAsString();
         }
@@ -266,7 +266,7 @@ public class RemoteConfig {
 
         if(!zipOnly) {
             for(Resource r: resources)
-                fl.addFile(r.getFileName());
+                fl.addFile(JCEF_ROOT + "/" + r.getFileName());
         }
 
         boolean allOk = true;
